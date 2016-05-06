@@ -1,14 +1,14 @@
 # DataTrue API client
 
-DataTrue is a SaaS platform to audit, monitor and validate tags, dataLayers and data collected from websites. The [DataTrue Test Builder chrome extension](https://chrome.google.com/webstore/detail/datatrue-test-builder/oghoceohpfhokhcoomihkobmpbcljall?hl=en) can quickly create test interactions with websites using our library of 100+ tag templates or custom tags. DataTrue works across complex AJAX interactions (e.g. using [AngularJS](https://angularjs.org/) and iframe content.
+DataTrue is a SaaS platform to audit, monitor and validate tags, dataLayers and data collected from websites. The [DataTrue Test Builder chrome extension](https://chrome.google.com/webstore/detail/datatrue-test-builder/oghoceohpfhokhcoomihkobmpbcljall?hl=en) can quickly create test interactions with websites using our library of 100+ tag templates or custom tags. DataTrue works across complex AJAX interactions (e.g. using [AngularJS](https://angularjs.org/)), iframe content and multiple domains.
 
-This ruby client allows you to trigger DataTrue tests from a Continuous Integration tool such as Jenkins, Teamcity, Travis-CI, Codeship and others.  If you’re practicing Continuous Delivery, it can be used to trigger a test of your application as soon as changes are released.
+This ruby client allows you to trigger DataTrue tests from a Continuous Integration tool such as [Jenkins](https://jenkins.io/), [Teamcity](https://www.jetbrains.com/teamcity/), [Travis CI](https://travis-ci.org/), [Codeship](https://codeship.com/) and others.  If you’re practicing Continuous Delivery, it can be used to trigger a test of your application as soon as changes are released.
 
 ## Usage
 
-You will need a DataTrue account ([free sign-up](https://datatrue.com/)) to use this gem.  To get your API key go to the [Accounts page](https://datatrue.com/accounts/), select your account and click on "Generate API Key".
+You will need a DataTrue account ([free sign-up](https://datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client)) to use this gem.  To get your API key go to the [Accounts page](https://datatrue.com/accounts/?utm_source=github&utm_medium=listing&utm_campaign=API_Client), select your account and click on "Generate API Key".
 
-The next steps assume you have a test suite created in DataTrue.  Read our [Knowledge Base](https://support.datatrue.com/hc/en-us/categories/200080049-Knowledge-Base) to find-out [how to quickly create a single-page test](https://support.datatrue.com/hc/en-us/articles/213538568-1-Use-Quick-Start-to-create-a-single-page-test).
+The next steps assume you have a test suite created in DataTrue.  Read our [Knowledge Base](https://support.datatrue.com/hc/en-us/categories/200080049-Knowledge-Base?utm_source=github&utm_medium=listing&utm_campaign=API_Client) to find-out [how to quickly create a single-page test](https://support.datatrue.com/hc/en-us/articles/213538568-1-Use-Quick-Start-to-create-a-single-page-test?utm_source=github&utm_medium=listing&utm_campaign=API_Client).
 
 Install the gem on the system you want to trigger your tests from:
 
@@ -22,7 +22,7 @@ gem 'datatrue_client', :group => [:test, :development]
 
 ### Command-line usage
 
-Use the [DataTrue API wizard](https://datatrue.com/) to select your test(s) or test suite along with other options.  Paste the command-line in your terminal to see it in action; e.g.:
+Use the [DataTrue API wizard](https://datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client) to select your test(s) or test suite along with other options.  Paste the command-line in your terminal to see it in action; e.g.:
 
 ```
 datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
@@ -100,9 +100,9 @@ Here's an example of what the results look like in Jenkins v1.6.
 
 ## Support
 
-Our [support website](https://support.datatrue.com/) has more detailed information about DataTrue and the API client.
+Our [support website](https://support.datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client) has more detailed information about DataTrue and the API client.
 
-If you believe you have found a bug, please [reach-out using the support website](https://support.datatrue.com/hc/en-us/requests/new) or through support@datatrue.com.
+If you believe you have found a bug, please [reach-out using the support website](https://support.datatrue.com/hc/en-us/requests/new?utm_source=github&utm_medium=listing&utm_campaign=API_Client) or through support@datatrue.com.
 
 ## Contributing
 

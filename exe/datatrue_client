@@ -1,0 +1,167 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "optparse"
+require 'ostruct'
+require "datatrue_client"
+
+COMMANDS = ['run', 'trigger']
+TYPES = ['test', 'suite']
+
+def parse(args)
+  # The options specified on the command line will be collected in *options*.
+  options = OpenStruct.new
+  options.variables = {}
+  options.email_user_ids = []
+  options.silent = false
+
+  opt_parser = OptionParser.new do |opts|
+    opts.banner = "Usage: datatrue_client command(#{COMMANDS.join('|')}) id [options]"
+
+    opts.separator ""
+    opts.separator "The run command triggers a new run of test or test suite and waits for it to finish. The trigger command triggers a new run of test or test suite and exits immediately. Below are common options for run and trigger:"
+
+    opts.on("-a", "--api-key [KEY]",
+            "The DataTrue API key.",
+            "Overrides the API key provided as an environment variable.") do |key|
+      options.api_key = key
+    end
+
+    opts.on("-t", "--type TYPE", TYPES,
+            "The type of test to be run (#{TYPES.join(', ')})") do |t|
+      case t
+      when 'test'
+        options.type = 'TestScenario'
+      when 'suite'
+        options.type = 'Suite'
+      end
+    end
+
+    opts.on("--host [HOST]", "API host") do |h|
+      options.host = h
+    end
+
+    opts.on("--scheme [SCHEME]", "API host scheme") do |s|
+      options.scheme = s
+    end
+
+    opts.on("--variables [key=value,...]", Array,
+            "Variables provided to the test.",
+            "These can be used to change behaviour of your test, provide credentials and more.") do |list|
+      (list || []).each do |variable|
+        pair = variable.split('=')
+        options.variables[pair[0].to_sym] = pair[1]
+      end
+    end
+
+    opts.on("--email-users [1,2,...]", Array,
+            "Comma-separated list of user ids who will receive an email with the test results.") do |list|
+      (list || []).each do |id|
+        options.email_user_ids << Integer(id)
+      end
+    end
+
+    opts.on("-s", "--silent", "Suppress all application output.") do |s|
+      options.silent = s
+    end
+
+    opts.separator ""
+    opts.separator "Specific options for run:"
+
+    opts.on("--timeout [TIMEOUT]", "Time to wait before the run finishes.") do |t|
+      options.polling_timeout = t
+    end
+
+    opts.separator ""
+    opts.separator "Common options:"
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+
+    opts.on_tail("--version", "Show version") do
+      puts DatatrueClient::VERSION
+      exit
+    end
+  end
+
+  opt_parser.parse!(args)
+  options
+end
+
+def datatrue_print(message)
+  puts "datatrue_client: #{message}"
+end
+
+def process_result(details)
+  if details[:status] == 'completed'
+    if details[:progress]['tests'].all? { |result| ['success', 'validated'].include? result['state'] }
+      status = 'passed'
+    else
+      status = 'failed'
+    end
+  else
+    status = details[:status]
+  end
+end
+
+begin
+  options = parse(ARGV)
+  command = ARGV.shift
+  id = ARGV.shift
+
+  # Check mandatory inputs
+  if command.nil? || !COMMANDS.include?(command)
+    datatrue_print "missing or invalid command. Run 'datatrue_client --help' for instructions."
+    exit
+  end
+  if id.nil?
+    datatrue_print "missing id."
+    exit
+  end
+  if options.type.nil?
+    datatrue_print "missing type. Possible types #{TYPES.join(', ')}."
+    exit
+  end
+
+  datatrue_print_progress = Proc.new do |progress, details|
+    datatrue_print %{
+    test_run_id=#{details[:options]['test_run_id']}
+    step=#{details[:num]}
+    total_steps=#{details[:total]}
+    result=#{process_result(details)}
+    }.gsub(/\s+/, ' ').strip
+  end
+
+  test_run = DatatrueClient::TestRun.new({
+    host: options.host,
+    scheme: options.scheme,
+    api_key: options.api_key || ENV['DATATRUE_API_KEY'],
+
+    test_run: {
+      test_class: options.type,
+      test_id: Integer(id)
+    },
+    variables: options.variables,
+
+    polling_timeout: options.polling_timeout ? Integer(options.polling_timeout) : nil
+  })
+  datatrue_print "job=#{test_run.job_id} created for test=\"#{test_run.title}\"" unless options.silent
+
+  if command == 'run'
+    res = test_run.poll_progress(options.silent ? nil : datatrue_print_progress)
+    process_result(res) == 'passed' ? exit : exit(1)
+  else
+    exit
+  end
+rescue RestClient::Unauthorized => e
+  datatrue_print e.message
+  exit(-2)
+rescue DatatrueClient::QuotaExceeded => e
+  datatrue_print e.message
+  exit(-3)
+rescue => e
+  datatrue_print e.message
+  exit(-1)
+end

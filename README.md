@@ -30,7 +30,6 @@ datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
     -e 543,544
 
 datatrue_client: job=5e9316aa116b4a6fe5dfebda68accd60 created for test="DataTrue Public pages"
-datatrue_client: job=5e9316aa116b4a6fe5dfebda68accd60 started as test_run_id=52454
 datatrue_client: test_run_id=52454 step=1 total_steps=7 result=running
 datatrue_client: test_run_id=52454 step=1 total_steps=7 result=passed
 ...
@@ -57,29 +56,22 @@ _Commands_:
 datatrue_client run <suite_id | test_id_1,test_id_2,...> -a <api_key>
     [-t | --type=suite|test] [-v | --variables foo=bar,thunder=flash]
     [-e | --email-users '1,2,3...'] [-o | --output [filename]] [-s | --silent]
-```    
+```
 
 * `trigger`: triggers a new run of tests or a test suite and exits immediately.
 
 ```text
 datatrue_client trigger <suite_id | test_id_1,test_id_2,...> -a <api_key>
     [-t | --type=suite|test] [-v | --variables foo=bar,thunder=flash]
-     [-s | --silent]
+    [-s | --silent]
 ```
 
-* `poll`: queries DataTrue for results of a test run at a regular interval until it's finished.
-
-`datatrue_client poll <job_id> -a <api_key>`
-
-* `results`: retrieves the results of a test run from DataTrue.
-
-`datatrue_client results <test_run_id> -a <api_key> [-o | --output [filename]] [-s | --silent]`
-
 _Options_:
-* `-a`: mandatory. The DataTrue API key.  This overrides the API key provided as an environment variable.
-* `-t` or `--type`: the type of test to be run.  Valid options are `suite` or `test`.
-* `-v` or `--variables`: run-time variables to be provided to the test.  These can be used to change behaviour of your test, provide credentials and more.
-* `-e` or `--email-users`: a comma-separated list of user identifiers who will receive an email with the test results.
+
+* `-a` or `--api-key`: The DataTrue API key. Overrides the API key provided as an environment variable.
+* `-t` or `--type`: The type of test to be run. Valid options are `test` or `suite`.
+* `-v` or `--variables`: Variables provided to the test. These can be used to change behaviour of your test, provide credentials and more.
+* `-e` or `--email-users`: Comma-separated list of user identifiers who will receive an email with the test results.
 * `-o` or `--output`: write the test results as a JUnit XML report that can be used to integrate DataTrue test results with other test tools (e.g. Jenkins).  If no filename is provided the client will create a `<job_id>.xml`.
 * `-s` or `--silent`: suppress all application output.
 
@@ -88,6 +80,72 @@ _Options_:
 * `DATATRUE_API_KEY`: your DataTrue API key.  The `-a` option takes precedence.
 
 ### Usage in a Ruby application
+
+Trigger a test run:
+
+```
+  test_run = DatatrueClient::TestRun.new({
+    host: 'localhost:3000',
+    scheme: 'http',
+    api_key: '_AHQZRHZ3kD0kpa0Al-SJg',  # please remember to generate your own key on datatrue.com
+
+    test_run: {
+      test_class: 'TestScenario',
+      test_id: 1
+    },
+    variables: {
+      key: value
+    },
+
+    polling_interval: 2,  # in seconds, 2 by default
+    polling_timeout: 120  # in seconds, 60 by default
+  })
+```
+
+Query progress:
+
+```
+  test_run.query_progress
+
+  # returns the progress hash
+  #
+  # {
+  #   time: 1463359905,
+  #   status: "working",
+  #   uuid: "a1f7868b1db44d38c16585ce37e4ac3f",
+  #   num: 4,
+  #   total: 5,
+  #   progress: {
+  #     percentage: 80,
+  #     tests: [
+  #       {
+  #         id: 1,
+  #         name: "Test name",
+  #         state: "running",
+  #         steps_completed: 4,
+  #         steps: [
+  #           {
+  #             name: "Step name",
+  #             running: false,
+  #             pending: false,
+  #             error: nil,
+  #             tags: [
+  #               { name: "Tag name', enabled: true, valid: true },
+  #               ...
+  #             ]
+  #           },
+  #           ...
+  #         ]
+  #       },
+  #       ...
+  #     ]
+  #   }
+  # }
+```
+
+Poll progress (blocks until the run is finished or timed out):
+
+  `test_run.poll_progress`
 
 ### Jenkins Integration
 

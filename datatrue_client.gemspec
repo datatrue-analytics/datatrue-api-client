@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["odduid@gmail.com"]
 
   spec.summary       = %q{Ruby wrapper for DataTrue REST API.}
+  spec.description   = %q{This ruby client allows you to trigger DataTrue tests from a Continuous Integration tool such as Jenkins, Teamcity, Travis CI, Codeship and others. If you’re practicing Continuous Delivery, it can be used to trigger a test of your application as soon as changes are released.}
   spec.homepage      = "https://datatrue.com"
   spec.license       = "MIT"
 
@@ -21,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "webmock", "~> 2.0.1"
+  spec.add_development_dependency "webmock", "~> 2.0", ">= 2.0.1"
 
-  spec.add_dependency "rest-client", "~> 1.6.5"
+  spec.add_dependency "rest-client", "~> 1.6"
 end

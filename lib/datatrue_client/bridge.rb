@@ -19,7 +19,8 @@ module DatatrueClient
     #   payload = {
     #     test_run: {
     #       test_class: 'TestScenario',
-    #       test_id: '1'
+    #       test_id: '1',
+    #       email_users: [1, ...]
     #     },
     #     variables: {
     #       name: value,

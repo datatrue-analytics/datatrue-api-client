@@ -141,7 +141,8 @@ begin
 
     test_run: {
       test_class: options.type,
-      test_id: Integer(id)
+      test_id: Integer(id),
+      email_users: options.email_user_ids
     },
     variables: options.variables,
 

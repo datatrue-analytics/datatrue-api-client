@@ -72,8 +72,13 @@ _Options_:
 * `-t` or `--type`: The type of test to be run. Valid options are `test` or `suite`.
 * `-v` or `--variables`: Variables provided to the test. These can be used to change behaviour of your test, provide credentials and more.
 * `-e` or `--email-users`: Comma-separated list of user identifiers who will receive an email with the test results.
-* `-o` or `--output`: write the test results as a JUnit XML report that can be used to integrate DataTrue test results with other test tools (e.g. Jenkins).  If no filename is provided the client will create a `<job_id>.xml`.
-* `-s` or `--silent`: suppress all application output.
+* `-o` or `--output`: Write the test results as a JUnit XML report that can be used to integrate DataTrue test results with other test tools (e.g. Jenkins).  If no filename is provided the client will create a `<job_id>.xml`.
+* `-s` or `--silent`: Suppress all application output.
+* `-h` or `--help`: Show help message.
+
+_Specific options for run_:
+
+* `--timeout`: Time to wait before the run finishes.
 
 #### Environment variables
 

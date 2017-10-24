@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock", "~> 2.0", ">= 2.0.1"
 
   spec.add_dependency "addressable", "~> 2.4.0"
-  spec.add_dependency "rest-client", "~> 1.6"
+  spec.add_dependency "rest-client", "~> 2.0.2"
 end

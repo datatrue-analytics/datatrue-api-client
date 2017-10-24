@@ -177,3 +177,37 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+
+Trigger a test run using the HTTP REST API.
+
+Send the request to https://datatrue.com/ci_api/test_runs
+
+Make sure send the HTTP request with these headers "Accept: application/json", "Content-Type: application/json".
+
+The request body should be a stringified JSON containing:
+
+```
+{
+  "api_key": "key", // The DataTrue API key
+  "test_run": {
+    "test_class": "Suite", // Either 'Suite' or 'TestScenario'
+    "test_id": 159, // The id of the test
+    "email_users": [2,5,143] // User ids who will be emailed the results
+  },
+  "variables": {
+    "key": "value" // Variable provided to the test
+  }
+}
+```
+
+example using curl:
+
+```sh
+curl -sv \
+  --header "Accept: application/json" \
+  --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"api_key":"sJbpVJ8uadgXZqLNalUKsw","test_run":{"test_class":"Suite","test_id":159,"email_users":[2,5,143]},"variables":{"HOSTNAME":"cadel:r0cks@staging.datatrue.com","GTMID":"GTM-WVWQJQ"}}' \
+  https://datatrue.com/ci_api/test_runs
+```

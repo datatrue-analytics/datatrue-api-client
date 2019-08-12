@@ -38,6 +38,8 @@ gem 'datatrue_client', :group => [:test, :development]
 
 ### Command-line usage
 
+Use the following CLI syntax to select your test(s) or test suite along with other options.
+
 ```bash
 datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
     -v HOSTNAME=datatrue.com,GTMID=GTM-ABCXYZ \

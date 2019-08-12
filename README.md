@@ -4,6 +4,19 @@ DataTrue is a SaaS platform to audit, monitor and validate tags, dataLayers and 
 
 This ruby client allows you to trigger DataTrue tests from a Continuous Integration tool such as [Jenkins](https://jenkins.io/), [Teamcity](https://www.jetbrains.com/teamcity/), [Travis CI](https://travis-ci.org/), [Codeship](https://codeship.com/) and others.  If you’re practicing Continuous Delivery, it can be used to trigger a test of your application as soon as changes are released.
 
+## Table of Contents
+
+- [DataTrue API client](#datatrue-api-client)
+  - [Table of Contents](#table-of-contents)
+  - [Usage](#usage)
+    - [Command-line usage](#command-line-usage)
+      - [Environment variables](#environment-variables)
+    - [Usage in a Ruby application](#usage-in-a-ruby-application)
+  - [Support](#support)
+  - [Contributing](#contributing)
+    - [Development](#development)
+  - [License](#license)
+
 ## Usage
 
 You will need a DataTrue account ([free sign-up](https://datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client)) to use this gem.  To get your API key go to the [Accounts page](https://datatrue.com/accounts/?utm_source=github&utm_medium=listing&utm_campaign=API_Client), select your account and click on "Generate API Key".
@@ -12,7 +25,9 @@ The next steps assume you have a test suite created in DataTrue.  Read our [Know
 
 Install the gem on the system you want to trigger your tests from:
 
-    $ gem install datatrue_client
+```bash
+$ gem install datatrue_client
+```
 
 Alternatively, if you want to include the client as part of your ruby application, you can add this line to your Gemfile:
 
@@ -22,10 +37,10 @@ gem 'datatrue_client', :group => [:test, :development]
 
 ### Command-line usage
 
-Use the [DataTrue API wizard](https://datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client) to select your test(s) or test suite along with other options.  Paste the command-line in your terminal to see it in action; e.g.:
+Use the following CLI syntax to select your test(s) or test suite along with other options.
 
-```
-datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
+```bash
+$ datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
     -v HOSTNAME=datatrue.com,GTMID=GTM-ABCXYZ \
     -e 543,544
 
@@ -38,11 +53,12 @@ datatrue_client: test_run_id=52454 finished result=passed.
 ```
 
 The exit status of the application will change according to test results:
-* `0`: test run successful, result=passed.
-* `1`: test run successful, result=failed.
-* `-1`: generic test run error. See output detail.
-* `-2`: authentication or authorisation error.  Check your API key and test identifiers.
-* `-3`: quota exceeded.  You have used-up all your subscription allowance for this period.
+
+- `0`: test run successful, result=passed.
+- `1`: test run successful, result=failed.
+- `-1`: generic test run error. See output detail.
+- `-2`: authentication or authorisation error.  Check your API key and test identifiers.
+- `-3`: quota exceeded.  You have used-up all your subscription allowance for this period.
 
 If you want to ignore the exit status, use the shell's `||` operator; e.g.: `datatrue_client [options] || true`.  This will ensure that the exit status is always `0`.
 
@@ -50,15 +66,15 @@ If you want to ignore the exit status, use the shell's `||` operator; e.g.: `dat
 
 _Commands_:
 
-* `run`: triggers a new run of tests or a test suite and waits for it to finish.
+- `run`: triggers a new run of tests or a test suite and waits for it to finish.
 
 ```text
 datatrue_client run <suite_id | test_id_1,test_id_2,...> -a <api_key>
     [-t | --type=suite|test] [-v | --variables foo=bar,thunder=flash]
-    [-e | --email-users '1,2,3...'] [-o | --output [filename]] [-s | --silent]
+    [-e | --email-users '1,2,3...'] [-s | --silent]
 ```
 
-* `trigger`: triggers a new run of tests or a test suite and exits immediately.
+- `trigger`: triggers a new run of tests or a test suite and exits immediately.
 
 ```text
 datatrue_client trigger <suite_id | test_id_1,test_id_2,...> -a <api_key>
@@ -68,98 +84,90 @@ datatrue_client trigger <suite_id | test_id_1,test_id_2,...> -a <api_key>
 
 _Options_:
 
-* `-a` or `--api-key`: The DataTrue API key. Overrides the API key provided as an environment variable.
-* `-t` or `--type`: The type of test to be run. Valid options are `test` or `suite`.
-* `-v` or `--variables`: Variables provided to the test. These can be used to change behaviour of your test, provide credentials and more.
-* `-e` or `--email-users`: Comma-separated list of user identifiers who will receive an email with the test results.
-* `-o` or `--output`: Write the test results as a JUnit XML report that can be used to integrate DataTrue test results with other test tools (e.g. Jenkins).  If no filename is provided the client will create a `<job_id>.xml`.
-* `-s` or `--silent`: Suppress all application output.
-* `-h` or `--help`: Show help message.
+- `-a` or `--api-key`: The DataTrue API key. Overrides the API key provided as an environment variable.
+- `-t` or `--type`: The type of test to be run. Valid options are `test` or `suite`.
+- `-v` or `--variables`: Variables provided to the test. These can be used to change behaviour of your test, provide credentials and more.
+- `-e` or `--email-users`: Comma-separated list of user identifiers who will receive an email with the test results.
+- `-s` or `--silent`: Suppress all application output.
+- `-h` or `--help`: Show help message.
 
 _Specific options for run_:
 
-* `--timeout`: Time to wait before the run finishes.
+- `--timeout`: Time to wait before the run finishes.
 
 #### Environment variables
 
-* `DATATRUE_API_KEY`: your DataTrue API key.  The `-a` option takes precedence.
+- `DATATRUE_API_KEY`: your DataTrue API key.  The `-a` option takes precedence.
 
 ### Usage in a Ruby application
 
 Trigger a test run:
 
-```
-  test_run = DatatrueClient::TestRun.new({
-    host: 'localhost:3000',
-    scheme: 'http',
-    api_key: '_AHQZRHZ3kD0kpa0Al-SJg',  # please remember to generate your own key on datatrue.com
+```ruby
+test_run = DatatrueClient::TestRun.new({
+  host: 'localhost:3000',
+  scheme: 'http',
+  api_key: '_AHQZRHZ3kD0kpa0Al-SJg',  # please remember to generate your own key on datatrue.com
 
-    test_run: {
-      test_class: 'TestScenario',
-      test_id: 1
-    },
-    variables: {
-      key: value
-    },
+  test_run: {
+    test_class: 'TestScenario',
+    test_id: 1
+  },
+  variables: {
+    key: value
+  },
 
-    polling_interval: 2,  # in seconds, 2 by default
-    polling_timeout: 120  # in seconds, 60 by default
-  })
+  polling_interval: 2,  # in seconds, 2 by default
+  polling_timeout: 120  # in seconds, 60 by default
+})
 ```
 
 Query progress:
 
-```
-  test_run.query_progress
+```ruby
+test_run.query_progress
 
-  # returns the progress hash
-  #
-  # {
-  #   time: 1463359905,
-  #   status: "working",
-  #   uuid: "a1f7868b1db44d38c16585ce37e4ac3f",
-  #   num: 4,
-  #   total: 5,
-  #   progress: {
-  #     percentage: 80,
-  #     tests: [
-  #       {
-  #         id: 1,
-  #         name: "Test name",
-  #         state: "running",
-  #         steps_completed: 4,
-  #         steps: [
-  #           {
-  #             name: "Step name",
-  #             running: false,
-  #             pending: false,
-  #             error: nil,
-  #             tags: [
-  #               { name: "Tag name', enabled: true, valid: true },
-  #               ...
-  #             ]
-  #           },
-  #           ...
-  #         ]
-  #       },
-  #       ...
-  #     ]
-  #   }
-  # }
+# returns the progress hash
+#
+# {
+#   time: 1463359905,
+#   status: "working",
+#   uuid: "a1f7868b1db44d38c16585ce37e4ac3f",
+#   num: 4,
+#   total: 5,
+#   progress: {
+#     percentage: 80,
+#     tests: [
+#       {
+#         id: 1,
+#         name: "Test name",
+#         state: "running",
+#         steps_completed: 4,
+#         steps: [
+#           {
+#             name: "Step name",
+#             running: false,
+#             pending: false,
+#             error: nil,
+#             tags: [
+#               { name: "Tag name', enabled: true, valid: true },
+#               ...
+#             ]
+#           },
+#           ...
+#         ]
+#       },
+#       ...
+#     ]
+#   }
+# }
 ```
 
 Poll progress (blocks until the run is finished or timed out):
 
-  `test_run.poll_progress`
-
-### Jenkins Integration
-
-The DataTrue client can output test results in the [JUnit  format](https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd) which can then be parsed by the [Jenkins JUnit plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin) and incorporated into your test results.
-
-Here's an example of what the results look like in Jenkins v1.6.
-
-<img src="documentation/jenkins_datatrue_test_result_summary.png?raw=true" alt="DataTrue test result summary in Jenkins" height="400"/>
-
+```ruby
+test_run.poll_progress
+```
 
 ## Support
 
@@ -169,15 +177,13 @@ If you believe you have found a bug, please [reach-out using the support website
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Lens10/datatrue_client.
-
+Bug reports and pull requests are welcome on GitHub at <https://github.com/Lens10/datatrue-api-client>.
 
 ### Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
 
 ## License
 

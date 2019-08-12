@@ -38,8 +38,6 @@ gem 'datatrue_client', :group => [:test, :development]
 
 ### Command-line usage
 
-Use the [DataTrue API wizard](https://datatrue.com/?utm_source=github&utm_medium=listing&utm_campaign=API_Client) to select your test(s) or test suite along with other options.  Paste the command-line in your terminal to see it in action; e.g.:
-
 ```bash
 datatrue_client run 1539 -a rtTlaqucG9RrTg1G2L1O0u -t suite \
     -v HOSTNAME=datatrue.com,GTMID=GTM-ABCXYZ \

@@ -12,7 +12,6 @@ This ruby client allows you to trigger DataTrue tests from a Continuous Integrat
     - [Command-line usage](#command-line-usage)
       - [Environment variables](#environment-variables)
     - [Usage in a Ruby application](#usage-in-a-ruby-application)
-    - [Jenkins Integration](#jenkins-integration)
   - [Support](#support)
   - [Contributing](#contributing)
     - [Development](#development)
@@ -72,7 +71,7 @@ _Commands_:
 ```text
 datatrue_client run <suite_id | test_id_1,test_id_2,...> -a <api_key>
     [-t | --type=suite|test] [-v | --variables foo=bar,thunder=flash]
-    [-e | --email-users '1,2,3...'] [-o | --output [filename]] [-s | --silent]
+    [-e | --email-users '1,2,3...'] [-s | --silent]
 ```
 
 - `trigger`: triggers a new run of tests or a test suite and exits immediately.
@@ -89,7 +88,6 @@ _Options_:
 - `-t` or `--type`: The type of test to be run. Valid options are `test` or `suite`.
 - `-v` or `--variables`: Variables provided to the test. These can be used to change behaviour of your test, provide credentials and more.
 - `-e` or `--email-users`: Comma-separated list of user identifiers who will receive an email with the test results.
-- `-o` or `--output`: Write the test results as a JUnit XML report that can be used to integrate DataTrue test results with other test tools (e.g. Jenkins).  If no filename is provided the client will create a `<job_id>.xml`.
 - `-s` or `--silent`: Suppress all application output.
 - `-h` or `--help`: Show help message.
 
@@ -167,15 +165,9 @@ test_run.query_progress
 
 Poll progress (blocks until the run is finished or timed out):
 
-  `test_run.poll_progress`
-
-### Jenkins Integration
-
-The DataTrue client can output test results in the [JUnit  format](https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd) which can then be parsed by the [Jenkins JUnit plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin) and incorporated into your test results.
-
-Here's an example of what the results look like in Jenkins v1.6.
-
-<img src="documentation/jenkins_datatrue_test_result_summary.png?raw=true" alt="DataTrue test result summary in Jenkins" height="400"/>
+```ruby
+test_run.poll_progress
+```
 
 ## Support
 

@@ -93,47 +93,6 @@ def datatrue_print(message)
   puts "datatrue_client: #{message}"
 end
 
-def get_state(details)
-  if details[:status] == 'completed'
-    if details[:progress]['tests'].all? { |result| ['success', 'validated'].include? result['state'] }
-      status = 'passed'
-    else
-      status = 'failed'
-    end
-  else
-    status = details[:status]
-  end
-end
-
-def build_progress_message(details)
-  state = get_state(details)
-  tests = details.dig(:progress, 'tests') || []
-  steps = tests.map { |test| test['steps'] }.compact.flatten
-  total_steps = details.dig(:progress, 'steps_total')
-  i = steps.index { |step| step['running'] }
-
-  if i
-    # format progress details if available
-    step = steps[i]
-    is_coverage_step = step['actions_total'] > 1
-    coverage_step_details = " (#{step['actions_completed']}/#{step['actions_total']} pages)"
-
-    message = %{
-      test_run_id=#{details[:options]['test_run_id']}
-      step=#{i + 1}#{is_coverage_step ? coverage_step_details : ''}
-      total_steps=#{total_steps}
-      result=#{state}
-    }
-  else
-    message = %{
-      test_run_id=#{details[:options]['test_run_id']}
-      result=#{state}
-    }
-  end
-
-  message.gsub(/\s+/, ' ').strip
-end
-
 begin
   options = parse(ARGV)
   command = ARGV.shift
@@ -171,11 +130,11 @@ begin
 
   if command == 'run'
     datatrue_print_progress = Proc.new do |progress, details|
-      datatrue_print(build_progress_message(details))
+      datatrue_print(DatatrueClient::TestRun.build_progress_message(details))
     end
 
     res = test_run.poll_progress(options.silent ? nil : datatrue_print_progress)
-    get_state(res) == 'passed' ? exit : exit(1)
+    DatatrueClient::TestRun.get_progress_status(res) == 'passed' ? exit : exit(1)
   else
     exit
   end

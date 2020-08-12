@@ -5,6 +5,53 @@ module DatatrueClient
   class QuotaExceeded < StandardError; end
 
   class TestRun
+    class << self
+      # @param details [Hash] The progress details hash. See CI API doc for the shape.
+      # @return [String]
+      def get_progress_status(details)
+        if details[:status] == 'completed'
+          if details[:progress]['tests'].all? { |result| ['success', 'validated'].include? result['state'] }
+            status = 'passed'
+          else
+            status = 'failed'
+          end
+        else
+          status = details[:status]
+        end
+      end
+
+      # @param details [Hash] The progress details hash. See CI API doc for the shape.
+      # @return [String]
+      def build_progress_message(details)
+        status = get_progress_status(details)
+        tests = details.dig(:progress, 'tests') || []
+        steps = tests.map { |test| test['steps'] }.compact.flatten
+        total_steps = details.dig(:progress, 'steps_total')
+        i = steps.index { |step| step['running'] }
+
+        if i
+          # read step and crawled pages details
+          step = steps[i]
+          is_coverage_step = step['actions_total'] > 1
+          coverage_step_details = " (#{step['actions_completed']}/#{step['actions_total']} pages)"
+
+          message = %{
+            test_run_id=#{details[:options]['test_run_id']}
+            step=#{i + 1}#{is_coverage_step ? coverage_step_details : ''}
+            total_steps=#{total_steps}
+            result=#{status}
+          }
+        else
+          message = %{
+            test_run_id=#{details[:options]['test_run_id']}
+            result=#{status}
+          }
+        end
+
+        message.gsub(/\s+/, ' ').strip
+      end
+    end
+
     attr_reader :job_id, :title, :progress
     attr_accessor :polling_timeout, :polling_interval
 

@@ -27,17 +27,17 @@ module DatatrueClient
         tests = details.dig(:progress, 'tests') || []
         steps = tests.map { |test| test['steps'] }.compact.flatten
         total_steps = details.dig(:progress, 'steps_total')
-        i = steps.index { |step| step['running'] }
+        current_step_index = steps.index { |step| step['running'] }
 
-        if i
+        if current_step_index
           # read step and crawled pages details
-          step = steps[i]
+          step = steps[current_step_index]
           is_coverage_step = step['actions_total'] > 1
           coverage_step_details = " (#{step['actions_completed']}/#{step['actions_total']} pages)"
 
           message = %{
             test_run_id=#{details[:options]['test_run_id']}
-            step=#{i + 1}#{is_coverage_step ? coverage_step_details : ''}
+            step=#{current_step_index + 1}#{is_coverage_step ? coverage_step_details : ''}
             total_steps=#{total_steps}
             result=#{status}
           }

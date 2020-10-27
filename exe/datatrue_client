@@ -93,18 +93,6 @@ def datatrue_print(message)
   puts "datatrue_client: #{message}"
 end
 
-def process_result(details)
-  if details[:status] == 'completed'
-    if details[:progress]['tests'].all? { |result| ['success', 'validated'].include? result['state'] }
-      status = 'passed'
-    else
-      status = 'failed'
-    end
-  else
-    status = details[:status]
-  end
-end
-
 begin
   options = parse(ARGV)
   command = ARGV.shift
@@ -124,15 +112,6 @@ begin
     exit
   end
 
-  datatrue_print_progress = Proc.new do |progress, details|
-    datatrue_print %{
-    test_run_id=#{details[:options]['test_run_id']}
-    step=#{details[:num]}
-    total_steps=#{details[:total]}
-    result=#{process_result(details)}
-    }.gsub(/\s+/, ' ').strip
-  end
-
   test_run = DatatrueClient::TestRun.new({
     host: options.host,
     scheme: options.scheme,
@@ -150,8 +129,12 @@ begin
   datatrue_print "job=#{test_run.job_id} created for test=\"#{test_run.title}\"" unless options.silent
 
   if command == 'run'
+    datatrue_print_progress = Proc.new do |progress, details|
+      datatrue_print(DatatrueClient::TestRun.build_progress_message(details))
+    end
+
     res = test_run.poll_progress(options.silent ? nil : datatrue_print_progress)
-    process_result(res) == 'passed' ? exit : exit(1)
+    DatatrueClient::TestRun.get_progress_status(res) == 'passed' ? exit : exit(1)
   else
     exit
   end

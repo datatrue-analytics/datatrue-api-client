@@ -131,18 +131,20 @@ test_run.query_progress
 #
 # {
 #   time: 1463359905,
-#   status: "working",
+#   status: "running",
 #   uuid: "a1f7868b1db44d38c16585ce37e4ac3f",
 #   num: 4,
 #   total: 5,
 #   progress: {
 #     percentage: 80,
+#     steps_total: 4,
 #     tests: [
 #       {
 #         id: 1,
 #         name: "Test name",
 #         state: "running",
-#         steps_completed: 4,
+#         actions_completed: 4,
+#         actions_total: 5,
 #         steps: [
 #           {
 #             name: "Step name",
@@ -177,7 +179,7 @@ If you believe you have found a bug, please [reach-out using the support website
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at <https://github.com/Lens10/datatrue-api-client>.
+Bug reports and pull requests are welcome on GitHub at <https://github.com/datatrue-analytics/datatrue-api-client>.
 
 ### Development
 

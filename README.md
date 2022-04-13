@@ -1,3 +1,5 @@
+> This CLI is deprecated. For a more feature-rich CLI, see [`datatrue-cli`](https://github.com/datatrue-analytics/datatrue-cli)
+
 # DataTrue API client
 
 DataTrue is a SaaS platform to audit, monitor and validate tags, dataLayers and data collected from websites. The [DataTrue Test Builder chrome extension](https://chrome.google.com/webstore/detail/datatrue-test-builder/oghoceohpfhokhcoomihkobmpbcljall?hl=en) can quickly create test interactions with websites using our library of 100+ tag templates or custom tags. DataTrue works across complex AJAX interactions (e.g. using [AngularJS](https://angularjs.org/)), iframe content and multiple domains.
